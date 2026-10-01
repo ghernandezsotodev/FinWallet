@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/wallet_db}
+    username: ${DB_USER:wallet_user}
+    password: ${DB_PASSWORD:wallet_password}
+  jpa:
+    hibernate:
+      ddl-auto: update
