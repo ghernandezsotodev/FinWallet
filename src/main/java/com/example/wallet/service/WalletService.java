@@ -19,4 +19,10 @@ public class WalletService {
         Wallet walletInstance = new Wallet(userId, BigDecimal.ZERO);
         return walletRepository.save(walletInstance);
     }
+
+    public Wallet deposit(Long walletId, BigDecimal amount){
+        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new RuntimeException("Wallet not found"));
+        wallet.setBalance(wallet.getBalance().add(amount));
+        return walletRepository.save(wallet);
+    }
 }

@@ -1,12 +1,11 @@
 package com.example.wallet.controller;
 
+import com.example.wallet.dto.DepositRequest;
 import com.example.wallet.dto.WalletResponse;
 import com.example.wallet.model.Wallet;
 import com.example.wallet.service.WalletService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/wallets")
@@ -21,6 +20,16 @@ public class WalletController {
     @PostMapping
     public WalletResponse createWallet(@RequestParam Long userId) {
         Wallet wallet = walletService.createWallet(userId);
+        return new WalletResponse(
+                wallet.getId(),
+                wallet.getUserId(),
+                wallet.getBalance()
+        );
+    }
+
+    @PostMapping("/{id}/deposit")
+    public WalletResponse deposit(@PathVariable Long id, @RequestBody DepositRequest request){
+        Wallet wallet = walletService.deposit(id, request.amount());
         return new WalletResponse(
                 wallet.getId(),
                 wallet.getUserId(),
