@@ -3,9 +3,10 @@ package com.example.wallet.service;
 import com.example.wallet.model.Wallet;
 import com.example.wallet.repository.WalletRepository;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
+@Transactional
 @Service
 public class WalletService {
 
