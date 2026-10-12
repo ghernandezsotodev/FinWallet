@@ -25,4 +25,13 @@ public class WalletService {
         wallet.setBalance(wallet.getBalance().add(amount));
         return walletRepository.save(wallet);
     }
+
+    public Wallet withdraw(Long walletId, BigDecimal amount){
+        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new RuntimeException("Wallet not found"));
+        if(wallet.getBalance().compareTo(amount) < 0){
+            throw new RuntimeException("Insufficient funds");
+        }
+        wallet.setBalance(wallet.getBalance().subtract(amount));
+        return walletRepository.save(wallet);
+    }
 }
