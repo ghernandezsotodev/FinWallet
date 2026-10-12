@@ -35,4 +35,9 @@ public class WalletService {
         wallet.setBalance(wallet.getBalance().subtract(amount));
         return walletRepository.save(wallet);
     }
+
+    public void transfer(Long originWalletId, Long destinationWalletId, BigDecimal amount){
+        this.withdraw(originWalletId, amount);
+        this.deposit(destinationWalletId, amount);
+    }
 }

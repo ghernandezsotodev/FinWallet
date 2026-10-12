@@ -1,6 +1,7 @@
 package com.example.wallet.controller;
 
 import com.example.wallet.dto.DepositRequest;
+import com.example.wallet.dto.TransferRequest;
 import com.example.wallet.dto.WalletResponse;
 import com.example.wallet.dto.WithdrawRequest;
 import com.example.wallet.model.Wallet;
@@ -46,5 +47,10 @@ public class WalletController {
                 wallet.getUserId(),
                 wallet.getBalance()
         );
+    }
+
+    @PostMapping("/transfer")
+    public void transfer(@RequestBody TransferRequest transferRequest){
+        walletService.transfer(transferRequest.originWalletId(), transferRequest.destinationWalletId(), transferRequest.amount());
     }
 }
