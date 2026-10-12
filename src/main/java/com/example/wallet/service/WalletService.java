@@ -28,7 +28,7 @@ public class WalletService {
     }
 
     public Wallet withdraw(Long walletId, BigDecimal amount){
-        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new RuntimeException("Wallet not found"));
+        Wallet wallet = walletRepository.findByIdForUpdate(walletId).orElseThrow(() -> new RuntimeException("Wallet not found"));
         if(wallet.getBalance().compareTo(amount) < 0){
             throw new RuntimeException("Insufficient funds");
         }
