@@ -6,6 +6,7 @@ import com.example.wallet.dto.WalletResponse;
 import com.example.wallet.dto.WithdrawRequest;
 import com.example.wallet.model.Wallet;
 import com.example.wallet.service.WalletService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -30,7 +31,7 @@ public class WalletController {
     }
 
     @PostMapping("/{id}/deposit")
-    public WalletResponse deposit(@PathVariable Long id, @RequestBody DepositRequest request){
+    public WalletResponse deposit(@PathVariable Long id, @Valid @RequestBody DepositRequest request){
         Wallet wallet = walletService.deposit(id, request.amount());
         return new WalletResponse(
                 wallet.getId(),
@@ -40,7 +41,7 @@ public class WalletController {
     }
 
     @PostMapping("/{id}/withdraw")
-    public WalletResponse withdraw(@PathVariable Long id, @RequestBody WithdrawRequest request){
+    public WalletResponse withdraw(@PathVariable Long id, @Valid @RequestBody WithdrawRequest request){
         Wallet wallet = walletService.withdraw(id, request.amount());
         return new WalletResponse(
                 wallet.getId(),
@@ -50,7 +51,7 @@ public class WalletController {
     }
 
     @PostMapping("/transfer")
-    public void transfer(@RequestBody TransferRequest transferRequest){
+    public void transfer(@Valid @RequestBody TransferRequest transferRequest){
         walletService.transfer(transferRequest.originWalletId(), transferRequest.destinationWalletId(), transferRequest.amount());
     }
 }
