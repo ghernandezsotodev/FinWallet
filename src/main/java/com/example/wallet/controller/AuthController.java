@@ -1,6 +1,7 @@
 package com.example.wallet.controller;
 
 import com.example.wallet.dto.AuthRequest;
+import com.example.wallet.dto.AuthResponse;
 import com.example.wallet.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,4 +23,10 @@ public class AuthController {
     public void callRequest(@Valid @RequestBody AuthRequest authRequest){
         authService.register(authRequest);
     }
+
+    @PostMapping("/login")
+    public AuthResponse login(@Valid @RequestBody AuthRequest authRequest){
+        return authService.login(authRequest);
+    }
+
 }
