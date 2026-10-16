@@ -1,6 +1,8 @@
 package com.example.wallet.service;
 
+import com.example.wallet.model.User;
 import com.example.wallet.model.Wallet;
+import com.example.wallet.repository.UserRepository;
 import com.example.wallet.repository.WalletRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,33 +13,65 @@ import java.math.BigDecimal;
 public class WalletService {
 
     private final WalletRepository walletRepository;
+    private final UserRepository userRepository;
 
-    public WalletService(WalletRepository walletRepository) {
+    public WalletService(WalletRepository walletRepository, UserRepository userRepository) {
         this.walletRepository = walletRepository;
+        this.userRepository = userRepository;
     }
 
-    public Wallet createWallet(Long userId){
-        Wallet walletInstance = new Wallet(userId, BigDecimal.ZERO);
+    public Wallet createWallet(String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        Wallet walletInstance = new Wallet(user.getId(), BigDecimal.ZERO);
+
         return walletRepository.save(walletInstance);
     }
 
-    public Wallet deposit(Long walletId, BigDecimal amount){
-        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new RuntimeException("Wallet not found"));
+    public Wallet deposit(Long walletId, BigDecimal amount, String email){
+        User user  = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        Wallet wallet = walletRepository.findById(walletId)
+                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+
+        if(!wallet.getUserId().equals(user.getId())){
+            throw  new RuntimeException("Access denied: You do not own this wallet.");
+        }
+
         wallet.setBalance(wallet.getBalance().add(amount));
+
         return walletRepository.save(wallet);
     }
 
-    public Wallet withdraw(Long walletId, BigDecimal amount){
-        Wallet wallet = walletRepository.findByIdForUpdate(walletId).orElseThrow(() -> new RuntimeException("Wallet not found"));
+    public Wallet withdraw(Long walletId, BigDecimal amount, String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        Wallet wallet = walletRepository.findByIdForUpdate(walletId)
+                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+
+        if(!wallet.getUserId().equals(user.getId())){
+            throw new RuntimeException("Access denied: You do not own this wallet.");
+        }
+
         if(wallet.getBalance().compareTo(amount) < 0){
             throw new RuntimeException("Insufficient funds");
         }
+
         wallet.setBalance(wallet.getBalance().subtract(amount));
         return walletRepository.save(wallet);
     }
 
-    public void transfer(Long originWalletId, Long destinationWalletId, BigDecimal amount){
-        this.withdraw(originWalletId, amount);
-        this.deposit(destinationWalletId, amount);
+    public void transfer(Long originWalletId, Long destinationWalletId, BigDecimal amount, String email){
+        this.withdraw(originWalletId, amount, email);
+
+        Wallet destinationWallet = walletRepository.findByIdForUpdate(destinationWalletId)
+                .orElseThrow(() -> new RuntimeException("Destination wallet not found."));
+
+        destinationWallet.setBalance(destinationWallet.getBalance().add(amount));
+        walletRepository.save(destinationWallet);
+
     }
 }

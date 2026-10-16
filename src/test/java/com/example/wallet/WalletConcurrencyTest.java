@@ -27,8 +27,8 @@ class WalletConcurrencyTest {
     @Test
     void testConcurrentWithdrawals() throws InterruptedException {
         // Creamos una billetera y le depositamos $100.
-        Wallet wallet = walletService.createWallet(1L);
-        walletService.deposit(wallet.getId(), new BigDecimal("100.00"));
+        Wallet wallet = walletService.createWallet("");
+        walletService.deposit(wallet.getId(), new BigDecimal("100.00"), "");
 
         int threadCount = 2;
 
@@ -44,7 +44,8 @@ class WalletConcurrencyTest {
                 try {
                     walletService.withdraw(
                             wallet.getId(),
-                            new BigDecimal("100.00")
+                            new BigDecimal("100.00"),
+                            ""
                     );
 
                     successfulWithdrawals.incrementAndGet();

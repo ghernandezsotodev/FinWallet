@@ -9,6 +9,8 @@ import com.example.wallet.service.WalletService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 
 @RestController
 @RequestMapping("/api/wallets")
@@ -21,8 +23,8 @@ public class WalletController {
     }
 
     @PostMapping
-    public WalletResponse createWallet(@RequestParam Long userId) {
-        Wallet wallet = walletService.createWallet(userId);
+    public WalletResponse createWallet(Principal principal) {
+        Wallet wallet = walletService.createWallet(principal.getName());
         return new WalletResponse(
                 wallet.getId(),
                 wallet.getUserId(),
@@ -31,8 +33,8 @@ public class WalletController {
     }
 
     @PostMapping("/{id}/deposit")
-    public WalletResponse deposit(@PathVariable Long id, @Valid @RequestBody DepositRequest request){
-        Wallet wallet = walletService.deposit(id, request.amount());
+    public WalletResponse deposit(@PathVariable Long id, @Valid @RequestBody DepositRequest request, Principal principal){
+        Wallet wallet = walletService.deposit(id, request.amount(), principal.getName());
         return new WalletResponse(
                 wallet.getId(),
                 wallet.getUserId(),
@@ -41,8 +43,8 @@ public class WalletController {
     }
 
     @PostMapping("/{id}/withdraw")
-    public WalletResponse withdraw(@PathVariable Long id, @Valid @RequestBody WithdrawRequest request){
-        Wallet wallet = walletService.withdraw(id, request.amount());
+    public WalletResponse withdraw(@PathVariable Long id, @Valid @RequestBody WithdrawRequest request, Principal principal){
+        Wallet wallet = walletService.withdraw(id, request.amount(), principal.getName());
         return new WalletResponse(
                 wallet.getId(),
                 wallet.getUserId(),
@@ -51,7 +53,12 @@ public class WalletController {
     }
 
     @PostMapping("/transfer")
-    public void transfer(@Valid @RequestBody TransferRequest transferRequest){
-        walletService.transfer(transferRequest.originWalletId(), transferRequest.destinationWalletId(), transferRequest.amount());
+    public void transfer(@Valid @RequestBody TransferRequest transferRequest, Principal principal){
+        walletService.transfer(
+                transferRequest.originWalletId(),
+                transferRequest.destinationWalletId(),
+                transferRequest.amount(),
+                principal.getName()
+        );
     }
 }
