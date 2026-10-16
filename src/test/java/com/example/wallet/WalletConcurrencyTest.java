@@ -26,7 +26,6 @@ class WalletConcurrencyTest {
 
     @Test
     void testConcurrentWithdrawals() throws InterruptedException {
-        // Creamos una billetera y le depositamos $100.
         Wallet wallet = walletService.createWallet("");
         walletService.deposit(wallet.getId(), new BigDecimal("100.00"), "");
 
@@ -38,7 +37,6 @@ class WalletConcurrencyTest {
         CountDownLatch latch = new CountDownLatch(threadCount);
         AtomicInteger successfulWithdrawals = new AtomicInteger(0);
 
-        // Los dos hilos intentan retirar los mismos $100 al mismo tiempo.
         for (int i = 0; i < threadCount; i++) {
             executorService.execute(() -> {
                 try {
@@ -60,16 +58,13 @@ class WalletConcurrencyTest {
             });
         }
 
-        // Esperamos a que terminen ambos retiros.
         latch.await();
         executorService.shutdown();
 
-        // Consultamos el saldo que quedó guardado en la base de datos.
         Wallet updatedWallet = walletRepository
                 .findById(wallet.getId())
                 .orElseThrow();
 
-        // Solo uno de los dos retiros debería completarse.
         assertEquals(
                 1,
                 successfulWithdrawals.get(),
