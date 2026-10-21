@@ -17,6 +17,8 @@ export class AuthService {
   }
 
   login(request: AuthRequest): Observable<AuthResponse> {
+    this.logout();
+
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
       tap(response => {
         if (response && response.token) {

@@ -65,6 +65,10 @@ public class WalletService {
     }
 
     public void transfer(Long originWalletId, Long destinationWalletId, BigDecimal amount, String email){
+        if (originWalletId.equals(destinationWalletId)) {
+            throw new IllegalArgumentException("No es posible transferir a tu propia billetera.");
+        }
+
         this.withdraw(originWalletId, amount, email);
 
         Wallet destinationWallet = walletRepository.findByIdForUpdate(destinationWalletId)
@@ -72,7 +76,6 @@ public class WalletService {
 
         destinationWallet.setBalance(destinationWallet.getBalance().add(amount));
         walletRepository.save(destinationWallet);
-
     }
 
     public Wallet getWalletByUserEmail(String email) {

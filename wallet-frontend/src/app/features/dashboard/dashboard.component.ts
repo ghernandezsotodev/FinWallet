@@ -61,7 +61,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // Controladores del Modal
   openModal(type: 'deposit' | 'withdraw' | 'transfer'): void {
     this.operationMessage.set(null);
     this.depositForm.reset({ amount: 0 });
@@ -93,6 +92,15 @@ export class DashboardComponent implements OnInit {
   onTransfer(): void {
     if (this.transferForm.invalid || !this.wallet()) return;
     const formValue = this.transferForm.getRawValue();
+
+    if (formValue.destinationWalletId === this.wallet()!.id) {
+      this.operationMessage.set({
+        type: 'error',
+        text: 'No puedes realizar una transferencia a tu propia billetera.'
+      });
+      return;
+    }
+
     this.executeOperation(
       this.walletService.transfer({
         originWalletId: this.wallet()!.id,
