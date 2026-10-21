@@ -1,1 +1,33 @@
-<p>dashboard works!</p>
+<div class="dashboard-wrapper">
+  <header class="dashboard-header">
+    <h1>Mi Billetera</h1>
+    <button (click)="logout()" class="btn-logout">Cerrar Sesión</button>
+  </header>
+
+  <main class="dashboard-content">
+    @if (isLoading()) {
+      <div class="loading-state">
+        <p>Cargando tu saldo...</p>
+      </div>
+    }
+    @else if (errorMessage()) {
+      <div class="alert alert-error">
+        <p>{{ errorMessage() }}</p>
+        <button (click)="loadWallet()">Reintentar</button>
+      </div>
+    }
+    @else if (wallet()) {
+      <section class="wallet-card">
+        <h2>Saldo Actual</h2>
+        <p class="balance">{{ wallet()!.balance | currency:'USD':'symbol':'1.2-2' }}</p>
+        <p class="wallet-id">ID de Billetera: #{{ wallet()!.id }}</p>
+      </section>
+
+      <section class="actions">
+        <button class="btn-deposit" disabled>Depositar</button>
+        <button class="btn-withdraw" disabled>Retirar</button>
+        <button class="btn-transfer" disabled>Transferir</button>
+      </section>
+    }
+  </main>
+</div>
