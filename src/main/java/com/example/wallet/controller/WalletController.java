@@ -61,4 +61,15 @@ public class WalletController {
                 principal.getName()
         );
     }
+
+    @GetMapping
+    public WalletResponse getMyWallet(Principal principal) {
+        Wallet wallet = walletService.getWalletByUserEmail(principal.getName());
+
+        return new WalletResponse(
+                wallet.getId(),
+                wallet.getUserId(),
+                wallet.getBalance()
+        );
+    }
 }

@@ -15,4 +15,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     @Query("SELECT w FROM Wallet w Where w.id = :id")
     Optional<Wallet> findByIdForUpdate(@Param("id") Long id);
 
+    Optional<Wallet> findByUserId(Long userId);
+
 }

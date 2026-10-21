@@ -34,7 +34,7 @@ public class WalletService {
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
         Wallet wallet = walletRepository.findById(walletId)
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+                .orElseThrow(() -> new RuntimeException("WalletService not found"));
 
         if(!wallet.getUserId().equals(user.getId())){
             throw  new RuntimeException("Access denied: You do not own this wallet.");
@@ -50,7 +50,7 @@ public class WalletService {
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
         Wallet wallet = walletRepository.findByIdForUpdate(walletId)
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+                .orElseThrow(() -> new RuntimeException("WalletService not found"));
 
         if(!wallet.getUserId().equals(user.getId())){
             throw new RuntimeException("Access denied: You do not own this wallet.");
@@ -73,5 +73,13 @@ public class WalletService {
         destinationWallet.setBalance(destinationWallet.getBalance().add(amount));
         walletRepository.save(destinationWallet);
 
+    }
+
+    public Wallet getWalletByUserEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        return walletRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("WalletService not found for this user."));
     }
 }

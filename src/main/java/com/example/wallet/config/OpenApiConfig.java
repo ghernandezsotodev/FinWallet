@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "Wallet API",
+                title = "WalletService API",
                 version = "1.0",
                 description = "Documentación interactiva de la API de Billeteras"
         ),
