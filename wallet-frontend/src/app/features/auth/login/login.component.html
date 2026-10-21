@@ -3,14 +3,12 @@
     <h2>Iniciar Sesión</h2>
     <p>Ingresa a tu billetera virtual</p>
 
-    <!-- Muestra el mensaje de error si las credenciales fallan -->
     @if (errorMessage) {
       <div class="alert alert-error">
         {{ errorMessage }}
       </div>
     }
 
-    <!-- Enlazamos el formulario de TS con [formGroup] y (ngSubmit) -->
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
       <div class="form-group">
@@ -22,7 +20,6 @@
           placeholder="ejemplo@correo.com"
           [attr.disabled]="isLoading ? true : null"
         >
-        <!-- Validación de errores reactiva -->
         @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
           <small class="error-text">Por favor, ingresa un correo válido.</small>
         }

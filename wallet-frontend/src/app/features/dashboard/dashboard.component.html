@@ -6,9 +6,7 @@
 
   <main class="dashboard-content">
     @if (isLoading()) {
-      <div class="loading-state">
-        <p>Cargando tu saldo...</p>
-      </div>
+      <div class="loading-state"><p>Cargando tu saldo...</p></div>
     }
     @else if (errorMessage()) {
       <div class="alert alert-error">
@@ -24,10 +22,67 @@
       </section>
 
       <section class="actions">
-        <button class="btn-deposit" disabled>Depositar</button>
-        <button class="btn-withdraw" disabled>Retirar</button>
-        <button class="btn-transfer" disabled>Transferir</button>
+        <button class="btn-deposit" (click)="openModal('deposit')">Depositar</button>
+        <button class="btn-withdraw" (click)="openModal('withdraw')">Retirar</button>
+        <button class="btn-transfer" (click)="openModal('transfer')">Transferir</button>
       </section>
     }
   </main>
+
+  @if (activeModal()) {
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <button class="btn-close" (click)="closeModal()" [disabled]="isOperating()">×</button>
+
+        @if (activeModal() === 'deposit') {
+          <h2>Depositar Dinero</h2>
+          <form [formGroup]="depositForm" (ngSubmit)="onDeposit()">
+            <div class="form-group">
+              <label>Monto a depositar</label>
+              <input type="number" formControlName="amount" min="0.01" step="0.01">
+            </div>
+            <button type="submit" [disabled]="depositForm.invalid || isOperating()">
+              {{ isOperating() ? 'Procesando...' : 'Confirmar Depósito' }}
+            </button>
+          </form>
+        }
+
+        @if (activeModal() === 'withdraw') {
+          <h2>Retirar Dinero</h2>
+          <form [formGroup]="withdrawForm" (ngSubmit)="onWithdraw()">
+            <div class="form-group">
+              <label>Monto a retirar</label>
+              <input type="number" formControlName="amount" min="0.01" step="0.01">
+            </div>
+            <button type="submit" [disabled]="withdrawForm.invalid || isOperating()">
+              {{ isOperating() ? 'Procesando...' : 'Confirmar Retiro' }}
+            </button>
+          </form>
+        }
+
+        @if (activeModal() === 'transfer') {
+          <h2>Transferir Dinero</h2>
+          <form [formGroup]="transferForm" (ngSubmit)="onTransfer()">
+            <div class="form-group">
+              <label>ID Billetera Destino</label>
+              <input type="number" formControlName="destinationWalletId" min="1">
+            </div>
+            <div class="form-group">
+              <label>Monto a transferir</label>
+              <input type="number" formControlName="amount" min="0.01" step="0.01">
+            </div>
+            <button type="submit" [disabled]="transferForm.invalid || isOperating()">
+              {{ isOperating() ? 'Procesando...' : 'Confirmar Transferencia' }}
+            </button>
+          </form>
+        }
+
+        @if (operationMessage()) {
+          <div class="alert" [ngClass]="operationMessage()!.type === 'success' ? 'alert-success' : 'alert-error'">
+            {{ operationMessage()!.text }}
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>
