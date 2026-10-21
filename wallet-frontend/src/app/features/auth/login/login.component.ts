@@ -1,9 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import {AuthRequest} from '../../../core/models/auth.model';
 
 @Component({
   selector: 'app-login',
@@ -17,13 +16,13 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  loginForm = this.fb.group({
+  loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]
   });
 
-  errorMessage = '';
-  isLoading = false;
+  errorMessage = signal<string>('');
+  isLoading = signal<boolean>(false);
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
@@ -31,17 +30,22 @@ export class LoginComponent {
       return;
     }
 
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set('');
 
-    this.authService.login(<AuthRequest>this.loginForm.value).subscribe({
+    this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: () => {
         console.log('¡Login exitoso! Token guardado.');
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = 'Credenciales inválidas o error de conexión.';
+        this.isLoading.set(false);
+
+        if (err.status === 401 || err.status === 403) {
+          this.errorMessage.set('Correo o contraseña incorrectos.');
+        } else {
+          this.errorMessage.set('Error de conexión. Inténtalo más tarde.');
+        }
         console.error('Login error:', err);
       }
     });

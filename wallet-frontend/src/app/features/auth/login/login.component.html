@@ -1,24 +1,29 @@
 <div class="login-wrapper">
   <div class="login-card">
-    <h2>Iniciar Sesión</h2>
-    <p>Ingresa a tu billetera virtual</p>
 
-    @if (errorMessage) {
+    <div class="brand">
+      <div class="logo-circle"></div>
+      <h2>FinWallet</h2>
+    </div>
+
+    <h3>Iniciar Sesión</h3>
+    <p class="subtitle">Ingresa a tu cuenta para operar</p>
+
+    @if (errorMessage()) {
       <div class="alert alert-error">
-        {{ errorMessage }}
+        {{ errorMessage() }}
       </div>
     }
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
       <div class="form-group">
         <label for="email">Correo Electrónico</label>
         <input
           id="email"
           type="email"
           formControlName="email"
-          placeholder="ejemplo@correo.com"
-          [attr.disabled]="isLoading ? true : null"
+          placeholder="ej. usuario@correo.com"
+          [readonly]="isLoading()"
         >
         @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
           <small class="error-text">Por favor, ingresa un correo válido.</small>
@@ -32,21 +37,20 @@
           type="password"
           formControlName="password"
           placeholder="••••••••"
-          [attr.disabled]="isLoading ? true : null"
+          [readonly]="isLoading()"
         >
         @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
           <small class="error-text">La contraseña es obligatoria.</small>
         }
       </div>
 
-      <button type="submit" [disabled]="loginForm.invalid || isLoading">
-        @if (isLoading) {
-          <span>Cargando...</span>
+      <button type="submit" [disabled]="loginForm.invalid || isLoading()">
+        @if (isLoading()) {
+          <span class="spinner"></span> Procesando...
         } @else {
-          <span>Ingresar</span>
+          <span>Ingresar a mi Billetera</span>
         }
       </button>
-
     </form>
   </div>
 </div>
