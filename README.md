@@ -104,6 +104,8 @@ FinWallet incorporates multiple safeguards to improve the security and consisten
 
 > **Note:** Vulnerability scan results depend on the scan date, the versions being analyzed, and the vulnerability database available at the time of scanning.
 
+https://github.com/user-attachments/assets/f7357ce5-deb5-4ec8-9670-1af5188182e6
+
 ## Author
 
 **Gonzalo Hernández**
