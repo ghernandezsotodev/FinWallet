@@ -37,6 +37,7 @@ export class LoginComponent {
     this.authService.login(<AuthRequest>this.loginForm.value).subscribe({
       next: () => {
         console.log('¡Login exitoso! Token guardado.');
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.isLoading = false;
